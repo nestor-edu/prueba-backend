@@ -1,8 +1,8 @@
 package com.nestor.dev.api.controller;
 
+import com.nestor.dev.api.dtos.ActivoPersonaDTO;
+import com.nestor.dev.api.exceptions.NotFoundException;
 import com.nestor.dev.api.model.ActivosFijos;
-import com.nestor.dev.api.model.Asignacion;
-import com.nestor.dev.api.model.ActivosPersonas;
 import com.nestor.dev.api.model.Persona;
 import com.nestor.dev.api.service.ActivoFijoService;
 import org.modelmapper.ModelMapper;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/activos")
+@RequestMapping("/activos")
 public class ActivosController {
     protected final ActivoFijoService service;
     protected final ModelMapper modelMapper;
@@ -29,12 +29,12 @@ public class ActivosController {
     }
 
     @GetMapping("/{codigo}")
-    public ResponseEntity<?> findByCode(@PathVariable String codigo) {
-        Optional<ActivosFijos> a = service.findByCodigo(codigo);
-
-        if (a.isEmpty()) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<?> findByCode(@PathVariable String codigo) throws NotFoundException {
+        Optional<ActivosFijos> activoOpt = service.findByCodigo(codigo);
+        if (activoOpt.isEmpty()) {
+            throw new NotFoundException("Producto No encontrado");
         }
+        ActivosFijos a = activoOpt.get();
 
         return ResponseEntity.ok().body(a);
     }
@@ -51,20 +51,12 @@ public class ActivosController {
     }
 
     @PostMapping("/asignaciones")
-    public ResponseEntity<?> saveAsignacion(@RequestBody ActivosPersonas dto) {
-        Optional<ActivosFijos> af = service.findByCodigo(dto.getCodigoAf());
-        Optional<Persona> persona = service.findByCarnet(dto.getNCarnet());
+    public ResponseEntity<?> saveAsignacion(@RequestBody ActivoPersonaDTO dto) throws NotFoundException {
+        Optional<ActivosFijos> optActivo = service.findByCodigo(dto.getCodActivo());
+        Optional<Persona> optPersona = service.findByCarnet(dto.getPersonaCarnet());
 
-        if (af.isEmpty() || persona.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Activo fijo o persona no encontrados");
-        } else {
-            Asignacion asignacionDb = new Asignacion();
-            asignacionDb.setPersonasId(persona.get().getIdPersona());
-            asignacionDb.setActivosFijosId(af.get().getIdActivoFijo());
-            service.saveAsignacion(asignacionDb);
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(findAsignaciones());
+        return ResponseEntity.status(HttpStatus.CREATED).
+                body(service.saveAsignacion(optPersona.get().getIdPersona(), optActivo.get().getIdActivoFijo()));
     }
 
     @DeleteMapping("/asignaciones/{id}")

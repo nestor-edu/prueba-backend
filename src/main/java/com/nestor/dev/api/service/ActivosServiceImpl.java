@@ -47,7 +47,10 @@ public class ActivosServiceImpl implements ActivoFijoService{
     }
 
     @Override
-    public Asignacion saveAsignacion(Asignacion asignacion) {
+    public Asignacion saveAsignacion(int personaId, int activoId) {
+        Asignacion asignacion = new Asignacion();
+        asignacion.setPersonasId(personaId);
+        asignacion.setActivosFijosId(activoId);
         return asignacionesRepository.save(asignacion);
     }
 

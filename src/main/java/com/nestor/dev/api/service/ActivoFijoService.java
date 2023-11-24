@@ -9,12 +9,12 @@ import java.util.Optional;
 
 public interface ActivoFijoService {
 
-    public Iterable<ActivosFijos> findAll();
-    public Optional<ActivosFijos> findByCodigo(String codigoId);
-    public ActivosFijos save(ActivosFijos activo);
-    public List<?> findAsignaciones();
-    public Asignacion saveAsignacion(Asignacion asignacion);
-    public Optional<Persona> findByCarnet(String carnet);
-    public void deleteAsignacion(int id);
+    Iterable<ActivosFijos> findAll();
+    Optional<ActivosFijos> findByCodigo(String codigoId);
+    ActivosFijos save(ActivosFijos activo);
+    List<?> findAsignaciones();
+    Asignacion saveAsignacion(int personaId, int activoId);
+    Optional<Persona> findByCarnet(String carnet);
+    void deleteAsignacion(int id);
 
 }

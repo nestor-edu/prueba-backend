@@ -3,10 +3,12 @@ package com.nestor.dev.api.repository;
 import com.nestor.dev.api.model.ActivosFijos;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.List;
 import java.util.Optional;
 
+@RepositoryRestResource
 public interface ActivoFijoRepository extends CrudRepository<ActivosFijos, Integer> {
 
     Optional<ActivosFijos> findByCodigo(String codigo);

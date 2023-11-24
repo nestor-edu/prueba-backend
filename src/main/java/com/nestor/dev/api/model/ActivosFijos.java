@@ -3,9 +3,9 @@ package com.nestor.dev.api.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "activos_fijos")
-@Data
 public class ActivosFijos {
 
     @Id
